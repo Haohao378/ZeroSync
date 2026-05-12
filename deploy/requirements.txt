@@ -1,0 +1,4 @@
+grpcio>=1.50.0
+grpcio-tools>=1.50.0
+zstandard>=0.21.0
+blake3>=0.3.3

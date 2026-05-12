@@ -1,0 +1,35 @@
+syntax = "proto3";
+package sync;
+
+service SyncService {
+    // 双向流：客户端持续发事件，服务端可返回 ACK 或要求补传的指令
+    rpc SyncEventStream(stream FSEventMessage) returns (stream ServerAck);
+
+    // 一次性强一致性请求：用于上传分块差异数据
+    rpc UploadPatches(PatchUploadRequest) returns (UploadResponse);
+}
+
+message FSEventMessage {
+    string event_id = 1;
+    string event_type = 2;
+    string path = 3;
+    string target_path = 4;
+    double timestamp = 5;
+}
+
+message PatchData {
+    uint64 offset = 1;
+    uint64 length = 2;
+    bytes compressed_data = 3;
+}
+
+message PatchUploadRequest {
+    string path = 1;
+    repeated PatchData patches = 2;
+}
+
+message UploadResponse {
+    bool success = 1;
+    string error_msg = 2;
+}
+message ServerAck { string event_id = 1; }
